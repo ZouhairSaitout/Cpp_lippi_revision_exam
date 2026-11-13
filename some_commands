@@ -17,3 +17,6 @@ net.ipv6.conf.default.disable_ipv6 = 1
 EOF
 sysctl --system
 ip -br addr          # no more IPv6 addresses (except maybe link-local, which disappears)
+
+
+https://cloud.oracle.com/?region=eu-marseille-1&tenant=dnsvm&username=saitout.zouhair2005%40gmail.com&provider=OracleIdentityCloudService
