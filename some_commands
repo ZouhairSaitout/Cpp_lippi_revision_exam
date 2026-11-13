@@ -1,0 +1,19 @@
+incus exec dnsvm -- apt-get update
+incus exec dnsvm -- apt-get install -y wireguard nftables bind9-dnsutils knot-dnsutils unbound curl tcpdump netcat-openbsd
+incus snapshot create dnsvm clean
+
+incus shell dnsvm
+
+curl -4 -o /dev/null -s -w "IPv4  DNS:%{time_namelookup}s  connect:%{time_connect}s  total:%{time_total}s\n" https://deb.debian.org/debian/README
+curl -6 -o /dev/null -s -w "IPv6  DNS:%{time_namelookup}s  connect:%{time_connect}s  total:%{time_total}s\n" https://deb.debian.org/debian/README
+
+# and without forcing anything, which is what apt etc. actually do:
+curl    -o /dev/null -s -w "auto  DNS:%{time_namelookup}s  connect:%{time_connect}s  total:%{time_total}s\n" https://deb.debian.org/debian/README
+
+
+cat > /etc/sysctl.d/99-no-ipv6.conf <<'EOF'
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+EOF
+sysctl --system
+ip -br addr          # no more IPv6 addresses (except maybe link-local, which disappears)
